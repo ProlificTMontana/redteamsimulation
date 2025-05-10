@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>AI-Powered Red Teaming Simulation</title>
+<style>
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    color: #f0f0f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  header h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    color: #d1c4e9;
+    text-shadow: 0 0 10px #673ab7;
+  }
+  header p {
+    margin: 0.2rem 0 0;
+    font-size: 1rem;
+    color: #b3a1c6;
+    font-style: italic;
+  }
+
+  main {
+    background: rgba(30, 30, 50, 0.85);
+    border-radius: 12px;
+    box-shadow: 0 0 20px #673ab7aa;
+    max-width: 600px;
+    width: 100%;
+    padding: 1rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  label {
+    font-weight: 600;
+    color: #d2b6ff;
+  }
+
+  select, button {
+    margin-top: 0.4rem;
+    padding: 0.6rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+    outline-offset: 2px;
+    transition: background-color 0.3s ease;
+  }
+
+  select {
+    background-color: #4a3f6b;
+    color: #eee;
+    box-shadow: inset 0 0 6px #5322a3;
+  }
+  select:focus {
+    background-color: #5d4c91;
+    outline: 2px solid #c39eff;
+  }
+
+  button {
+    background-color: #7b5dc7;
+    color: white;
+    box-shadow: 0 4px 10px #7b5dc7aa;
+    font-weight: 700;
+  }
+  button:hover, button:focus {
+    background-color: #9a7de0;
+    box-shadow: 0 6px 16px #9a7de0cc;
+    outline: none;
+  }
+
+  .simulation-output {
+    background: #2d2943;
+    border-radius: 10px;
+    padding: 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: inset 0 0 15px #7f68c6aa;
+  }
+
+  .event {
+    margin-bottom: 1rem;
+    padding: 0.45rem 0.7rem;
+    background: #524b82;
+    border-radius: 8px;
+    box-shadow: 0 0 8px #3a3571;
+    animation: fadein 0.8s ease forwards;
+  }
+  .event h3 {
+    margin: 0 0 0.3rem 0;
+    font-size: 1.1rem;
+    color: #b9a5e2;
+  }
+  .event p {
+    margin: 0;
+    color: #d6ccee;
+    font-size: 0.95rem;
+  }
+
+  .response-section {
+    margin-top: 0.8rem;
+  }
+  .response-section button {
+    background-color: #5e25a1;
+    font-weight: 600;
+    margin-right: 0.5rem;
+    box-shadow: 0 3px 8px #5e25a1cc;
+  }
+  .response-section button:hover,
+  .response-section button:focus {
+    background-color: #8236c7;
+    box-shadow: 0 5px 15px #8236c7cc;
+  }
+
+  .response-feedback {
+    margin-top: 0.5rem;
+    font-weight: 600;
+  }
+  .correct { color: #a2e67e; }
+  .incorrect { color: #ec7272; }
+
+  footer {
+    margin-top: auto;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #aba3c7;
+    padding: 0.5rem;
+  }
+  @keyframes fadein {
+    from {opacity: 0; transform: translateX(-15px);}
+    to {opacity: 1; transform: translateX(0);}
+  }
+
+  /* Mobile optimized */
+  @media (max-width: 400px) {
+    main {
+      padding: 1rem;
+    }
+    header h1 {
+      font-size: 1.4rem;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>AI-Powered Red Teaming Simulator</h1>
+  <p>Simulate Advanced Persistent Threats to test your defenses</p>
+</header>
+
+<main>
+  <label for="scenarioSelect">Choose or Generate Attack Scenario:</label>
+  <select id="scenarioSelect" aria-label="Select attack scenario">
+    <option value="">-- Select Scenario --</option>
+    <option value="phishing">Targeted Phishing Campaign</option>
+    <option value="supply_chain">Supply Chain Compromise</option>
+    <option value="ransomware">Ransomware Attack</option>
+    <option value="insider">Insider Threat Escalation</option>
+  </select>
+
+  <button id="startBtn">Start Simulation</button>
+
+  <section class="simulation-output" id="simulationOutput" aria-live="polite" aria-atomic="true" tabindex="0" role="region">
+    <em>Simulation output will appear here...</em>
+  </section>
+</main>
+
+<footer>
+  &copy; 2024 Cyber AI Red Team Simulator
+</footer>
+
+<script>
+(() => {
+  const scenarios = {
+    phishing: {
+      title: "Targeted Phishing Campaign",
+      steps: [
+        {
+          title: "Reconnaissance",
+          desc: "Gathered intelligence on employee roles and email patterns to craft a convincing phishing email."
+        },
+        {
+          title: "Initial Phishing Email Sent",
+          desc: "A spear-phishing email with a malicious link was sent to targeted employees."
+        },
+        {
+          title: "Credential Harvesting",
+          desc: "Victims clicked the link and entered credentials on a fake login page controlled by the attacker."
+        },
+        {
+          title: "Lateral Movement",
+          desc: "Using stolen credentials, attackers moved laterally to access sensitive internal systems."
+        },
+        {
+          title: "Data Exfiltration",
+          desc: "Sensitive data was collected and exfiltrated to an external server without detection."
+        }
+      ],
+      responses: [
+        {
+          prompt: "How should you respond to the initial phishing email?",
+          options: [
+            { text: "Report to security team immediately", correct: true },
+            { text: "Ignore and delete it", correct: false },
+            { text: "Click the link to investigate", correct: false }
+          ]
+        },
+        {
+          prompt: "What is the best defense against lateral movement?",
+          options: [
+            { text: "Use network segmentation", correct: true },
+            { text: "Give all users admin rights", correct: false },
+            { text: "Disable firewalls", correct: false }
+          ]
+        }
+      ]
+    },
+    supply_chain: {
+      title: "Supply Chain Compromise",
+      steps: [
+        {
+          title: "Third-party Vendor Access",
+          desc: "Attackers compromised a trusted vendor's system to gain entry."
+        },
+        {
+          title: "Malicious Update Delivered",
+          desc: "A software update with malicious code was pushed to client systems."
+        },
+        {
+          title: "Backdoor Installation",
+          desc: "Backdoors installed to maintain persistent access."
+        },
+        {
+          title: "Data Manipulation",
+          desc: "Critical data was altered stealthily to affect business decisions."
+        },
+        {
+          title: "Detection and Response",
+          desc: "Delayed detection allowed attackers to maximize impact."
+        }
+      ],
+      responses: [
+        {
+          prompt: "How can you mitigate risks from third-party vendors?",
+          options: [
+            { text: "Perform regular vendor risk assessments", correct: true },
+            { text: "Allow unrestricted vendor access", correct: false },
+            { text: "Ignore vendor security policies", correct: false }
+          ]
+        },
+        {
+          prompt: "What is critical for timely detection of supply chain attacks?",
+          options: [
+            { text: "Continuous monitoring of software updates", correct: true },
+            { text: "Disabling update notifications", correct: false },
+            { text: "Trusting all vendor updates blindly", correct: false }
+          ]
+        }
+      ]
+    },
+    ransomware: {
+      title: "Ransomware Attack",
+      steps: [
+        {
+          title: "Initial Intrusion",
+          desc: "Attackers gained access through a vulnerable exposed service."
+        },
+        {
+          title: "Malware Deployment",
+          desc: "Ransomware payload was deployed on critical servers."
+        },
+        {
+          title: "Encryption and Lockout",
+          desc: "Files were encrypted and the organization was locked out."
+        },
+        {
+          title: "Ransom Demand",
+          desc: "Attackers demanded payment for the decryption key."
+        },
+        {
+          title: "Incident Response",
+          desc: "The team initiated backup recovery and forensic analysis."
+        }
+      ],
+      responses: [
+        {
+          prompt: "What immediate step should be taken after detecting ransomware?",
+          options: [
+            { text: "Isolate affected systems", correct: true },
+            { text: "Pay the ransom immediately", correct: false },
+            { text: "Ignore and continue working", correct: false }
+          ]
+        },
+        {
+          prompt: "What best prevents ransomware encryption?",
+          options: [
+            { text: "Regular backups and patching", correct: true },
+            { text: "Disabling antivirus software", correct: false },
+            { text: "Sharing credentials freely", correct: false }
+          ]
+        }
+      ]
+    },
+    insider: {
+      title: "Insider Threat Escalation",
+      steps: [
+        {
+          title: "Privilege Abuse",
+          desc: "An insider abused elevated privileges to access sensitive data."
+        },
+        {
+          title: "Unauthorized Data Access",
+          desc: "Sensitive information was collected without proper authorization."
+        },
+        {
+          title: "Covering Tracks",
+          desc: "Logs were manipulated to hide unauthorized actions."
+        },
+        {
+          title: "Data Leakage",
+          desc: "Confidential data was leaked outside the organization."
+        },
+        {
+          title: "Incident Discovery",
+          desc: "Security team discovered unusual activity during routine audit."
+        }
+      ],
+      responses: [
+        {
+          prompt: "What is a strong control against insider threats?",
+          options: [
+            { text: "Implement strict access controls and monitoring", correct: true },
+            { text: "Give users unrestricted data access", correct: false },
+            { text: "Ignore unusual behavior reports", correct: false }
+          ]
+        },
+        {
+          prompt: "How should log manipulation be prevented?",
+          options: [
+            { text: "Use immutable logging and alerting", correct: true },
+            { text: "Allow users to modify logs", correct: false },
+            { text: "Disable logging altogether", correct: false }
+          ]
+        }
+      ]
+    }
+  };
+
+  const scenarioSelect = document.getElementById('scenarioSelect');
+  const startBtn = document.getElementById('startBtn');
+  const simulationOutput = document.getElementById('simulationOutput');
+
+  let currentScenario = null;
+  let currentStepIndex = 0;
+  let currentResponseIndex = 0;
+
+  function clearOutput() {
+    simulationOutput.innerHTML = '';
+  }
+
+  function appendEvent(title, desc) {
+    const eventElem = document.createElement('div');
+    eventElem.classList.add('event');
+    eventElem.tabIndex = 0;
+    eventElem.innerHTML = `<h3>${title}</h3><p>${desc}</p>`;
+    simulationOutput.appendChild(eventElem);
+    simulationOutput.scrollTop = simulationOutput.scrollHeight;
+  }
+
+  function appendResponsePrompt(prompt, options) {
+    const responseSection = document.createElement('div');
+    responseSection.classList.add('response-section');
+    responseSection.setAttribute('role', 'region');
+    responseSection.setAttribute('aria-live', 'polite');
+
+    const promptElem = document.createElement('p');
+    promptElem.textContent = prompt;
+    promptElem.style.fontWeight = '700';
+    promptElem.style.marginBottom = '0.4rem';
+
+    responseSection.appendChild(promptElem);
+
+    options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.type = "button";
+      btn.textContent = opt.text;
+      btn.dataset.correct = opt.correct ? "true" : "false";
+      btn.addEventListener('click', () => handleResponse(btn, responseSection));
+      responseSection.appendChild(btn);
+    });
+
+    simulationOutput.appendChild(responseSection);
+    simulationOutput.scrollTop = simulationOutput.scrollHeight;
+  }
+
+  function handleResponse(button, container) {
+    const isCorrect = button.dataset.correct === "true";
+    let feedback = container.querySelector('.response-feedback');
+    if (!feedback) {
+      feedback = document.createElement('div');
+      feedback.classList.add('response-feedback');
+      container.appendChild(feedback);
+    }
+    feedback.textContent = isCorrect ? "Correct!" : "Incorrect, try to learn the best response.";
+    feedback.className = 'response-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+
+    // Disable all buttons after answering
+    Array.from(container.querySelectorAll('button')).forEach(btn => btn.disabled = true);
+
+    // Automatically move to next step or response after delay, except if last
+    setTimeout(() => {
+      currentResponseIndex++;
+      if (currentResponseIndex < currentScenario.responses.length) {
+        // Clear previous response and add next
+        container.remove();
+        appendResponsePrompt(
+          currentScenario.responses[currentResponseIndex].prompt,
+          currentScenario.responses[currentResponseIndex].options
+        );
+      } else {
+        // Move on to next step if available
+        container.remove();
+        currentStepIndex++;
+        if (currentStepIndex < currentScenario.steps.length) {
+          appendEvent(currentScenario.steps[currentStepIndex].title, currentScenario.steps[currentStepIndex].desc);
+          // After last step, no more responses
+          if (currentStepIndex === currentScenario.steps.length - 1) {
+            appendEvent("Simulation Complete", "This concludes the simulated attack scenario.");
+          }
+        }
+      }
+    }, 2000);
+  }
+
+  function startSimulation() {
+    clearOutput();
+
+    const scenarioKey = scenarioSelect.value;
+    if (!scenarioKey || !scenarios[scenarioKey]) {
+      simulationOutput.innerHTML = '<em>Please select a valid attack scenario to start simulation.</em>';
+      return;
+    }
+    currentScenario = scenarios[scenarioKey];
+    currentStepIndex = 0;
+    currentResponseIndex = 0;
+
+    appendEvent(currentScenario.steps[currentStepIndex].title, currentScenario.steps[currentStepIndex].desc);
+    appendResponsePrompt(
+      currentScenario.responses[currentResponseIndex].prompt,
+      currentScenario.responses[currentResponseIndex].options
+    );
+  }
+
+  startBtn.addEventListener('click', startSimulation);
+})();
+</script>
+
+</body>
+</html>
+
+
