@@ -24,16 +24,16 @@ How to Use:
    Clone this repository to your local machine using the following command:
    
    ```bash
-   git clone 
+   git clone https://github.com/ProlificTMontana/redteamsimulation.git
    
 2. Open the HTML File: 
 
-   Navigate to the cloned directory and open the index.html file in your web browser. You can do this by double-clicking the file or using the following command in your terminal:
+   Navigate to the cloned directory and open the redteam.html file in your web browser. You can do this by double-clicking the file or using the following command in your terminal:
   
    ```bash
-   open index.html  # For macOS
-   xdg-open index.html  # For Linux
-   start index.html  # For Windows
+   open redteam.html  # For macOS
+   xdg-open redteam.html  # For Linux
+   start redteam.html  # For Windows
    
 3. Select an Attack Scenario: 
 
