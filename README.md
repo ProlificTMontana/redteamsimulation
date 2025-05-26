@@ -1,11 +1,11 @@
 # redteamsimulation
-Red Teaming Simulator
+# Red Teaming Simulator
 
-Overview:
+# Overview:
 
 The AI-Powered Red Teaming Simulator is a web-based application designed to simulate various cyber attack scenarios, allowing users to test their incident response skills. The simulator presents a series of events related to different attack types and prompts users to make decisions on how to respond. The application provides feedback on the user's choices, helping to improve their understanding of cybersecurity best practices.
 
-Features:
+# Features:
 
  * Simulates multiple attack scenarios, including:
 
@@ -17,7 +17,7 @@ Features:
  * Engaging user interface with animations and responsive design.
 
 
-How to Use:
+# How to Use:
 
 1. *Clone the Repository*:
  
@@ -56,7 +56,7 @@ How to Use:
    Continue making decisions until the simulation concludes. At the end, you will receive a summary of the scenario.
    
 
-How It Works:
+# How It Works:
 
     The simulator is built using HTML, CSS, and JavaScript.
     The attack scenarios and their corresponding events and responses are defined in a JavaScript object.
@@ -64,13 +64,13 @@ How It Works:
     The application uses event listeners to handle user interactions and provide real-time feedback.
     The design is responsive, ensuring a good user experience on both desktop and mobile devices.
     
-Technologies Used:
+# Technologies Used:
 
     HTML5
     CSS3
     JavaScript
     Responsive Web Design
 
-Contributing
+# Contributing
 
 Contributions are welcome! If you have suggestions for improvements or new features, feel free to open an issue or submit a pull request.
