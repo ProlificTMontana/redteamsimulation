@@ -1,4 +1,3 @@
-# redteamsimulation
 # Red Teaming Simulator
 
 # Overview:
